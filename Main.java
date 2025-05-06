@@ -8,7 +8,7 @@ public class Main {
 		boolean var = false;
         ArrayList<Conta> contas = new ArrayList<>();
 		while(!var){
-        Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Realizar Saque" , "Operacoes", "Sair"));
+        Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Realizar Saque", "Realizar depósito" , "Operacoes", "Sair"));
         int opcao = mainMenu.getSelection();
         System.out.println("Opcao " + opcao + " foi selecionada");
         if (opcao == 2) { // Suponha que "Cliente" é a opção 2
@@ -66,7 +66,50 @@ public class Main {
                                     sairOperacoes = true;
                                     break;
                             }
+                    break;  
                         }
+                    case 4: // Realizar depósito
+                        boolean sairDeposito = false;
+                        while (!sairDeposito) {
+                            Menu depositoMenu = new Menu("Menu de Depósito", Arrays.asList(
+                                "Realizar Depósito",
+                                "Voltar"
+                            ));
+                            int selecaoDeposito = depositoMenu.getSelection();
+                                
+                            switch (selecaoDeposito) {
+                                case 1: // Realizar Depósito
+                                    if (contas.isEmpty()) {
+                                        System.out.println("Nenhuma conta cadastrada!");
+                                        break;
+                                    }
+                                        
+                                    System.out.println("\nContas disponíveis:");
+                                    for (int i = 0; i < contas.size(); i++) {
+                                        System.out.println((i + 1) + ". " + contas.get(i));
+                                    }
+                                        
+                                    System.out.print("Escolha a conta para depósito (número): ");
+                                    int numContaDeposito = Integer.parseInt(scanner.nextLine()) - 1;
+                                        
+                                    if (numContaDeposito < 0 || numContaDeposito >= contas.size()) {
+                                        System.out.println("Número de conta inválido!");
+                                        break;
+                                    }
+                                        
+                                    System.out.print("Valor do depósito: R$");
+                                    double valorDeposito = Double.parseDouble(scanner.nextLine());
+                                        
+                                    contas.get(numContaDeposito).realizarDeposito(valorDeposito);
+                                    break;
+                                        
+                                case 2: // Voltar
+                                    sairDeposito = true;
+                                    break;
+                                
+                            }
+                        }
+                    break;    
                 }
             }
         }

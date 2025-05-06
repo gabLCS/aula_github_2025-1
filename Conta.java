@@ -1,3 +1,5 @@
+private List<String> transacoes = new ArrayList<>();
+
 public boolean realizarSaque(double valor) {
     if (valor <= 0) {
         System.out.println("Valor de saque inválido.");
@@ -14,6 +16,17 @@ public boolean realizarSaque(double valor) {
         System.out.println("Saldo atual: R$" + saldo);
         return false;
     }
+}
+
+public void realizarDeposito(double valor) {
+    if (valor <= 0) {
+        System.out.println("Valor de depósito inválido.");
+        return;
+    }
+    
+    saldo += valor;
+    System.out.println("Depósito de R$" + valor + " realizado com sucesso.");
+    System.out.println("Novo saldo: R$" + saldo);
 }
 
 // Getters
