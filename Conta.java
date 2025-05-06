@@ -17,22 +17,6 @@ public class Conta {
         transacoes.add("Conta criada para " + titular.getNome());
     }
 
-    public boolean sacar(double valor) {
-        if (valor > 0 && valor <= saldo) {
-            saldo -= valor;
-            transacoes.add("Saque de R$" + valor);
-            return true;
-        }
-        return false;
-    }
-
-    public void gerarRelatorio() {
-        System.out.println("=== Relatório da Conta " + numero + " ===");
-        for (String t : transacoes) {
-            System.out.println(t);
-        }
-        System.out.println("Saldo atual: R$" + saldo);
-    }
 
     public Cliente getTitular() {
         return titular;

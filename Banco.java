@@ -36,12 +36,4 @@ public class Banco {
         return clientes;
     }
 
-    public Conta encontrarContaPorNumero(int numero) {
-        for (Conta conta : contas) {
-            if (conta.getNumero() == numero) {
-                return conta;
-            }
-        }
-        return null;
-    }
 }
