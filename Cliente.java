@@ -7,8 +7,16 @@ public class Cliente {
         this.cpf = cpf;
     }
 
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
     @Override
     public String toString() {
-        return nome + " (CPF: " + cpf + ")";
+        return "Cliente: " + nome + " | CPF: " + cpf;
     }
 }
