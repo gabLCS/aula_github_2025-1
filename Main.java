@@ -1,103 +1,108 @@
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
+    private static final Banco banco = new Banco();
 
     public static void main(String[] args) {
-		Banco banco = new Banco();
-		boolean var = false;
+        Scanner scanner = new Scanner(System.in);
 
-		Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Operacoes", "Sair"));
-		while(!var){ 
-        ArrayList<Conta> contas = new ArrayList<>();
-		while(!var){
-        int opcao = mainMenu.getSelection();
-        System.out.println("Opcao " + opcao + " foi selecionada");
-        if (opcao == 2) { // Suponha que "Cliente" é a opção 2
-            Scanner scanner = new Scanner(System.in);
-            ArrayList<Cliente> clientes = new ArrayList<>();
-            boolean sair = false;
+        boolean sair = false;
+        while (!sair) {
+            Menu mainMenu = new Menu("Menu Principal", Arrays.asList("Conta", "Cliente", "Operacoes", "Sair"));
+            int opcao = mainMenu.getSelection();
 
-            while (!sair) {
-                Menu clienteMenu = new Menu("Menu do Cliente", Arrays.asList(
-                        "Cadastrar Cliente",
-                        "Sair"
-                ));
-                int selecao = clienteMenu.getSelection();
-                switch (selecao) {
-                    case 1: // Cadastrar Cliente
-					System.out.print("Nome: ");
-					String nome = scanner.nextLine();
-					System.out.print("CPF: ");
-					String cpf = scanner.nextLine();
-					banco.cadastrarCliente(nome, cpf);
-                        break;
-                    case 2: // Sair
-                        sair = true;
-                        break;
-                        
-                    case 3: // Realizar saque
-                        boolean sairOperacoes = false;
-                        while (!sairOperacoes) {
-                            Menu operacoesMenu = new Menu("Menu de Operações", Arrays.asList(
-                                    "Realizar Saque", // Nova opção
-                                    "Sair"
-                            ));
-                            int selecao = operacoesMenu.getSelection();
-                            switch (selecao) {
-                                case 1: // Realizar Saque
-                                    if (contas.isEmpty()) {
-                                        System.out.println("Nenhuma conta cadastrada!");
-                                        break;
-                                    }
-                                    System.out.println("\nContas disponíveis:");
-                                    for (int i = 0; i < contas.size(); i++) {
-                                        System.out.println((i + 1) + ". " + contas.get(i));
-                                    }
-                                    System.out.print("Escolha a conta (número): ");
-                                    int numConta = Integer.parseInt(scanner.nextLine()) - 1;
-                                    
-                                    System.out.print("Valor do saque: R$");
-                                    double valor = Double.parseDouble(scanner.nextLine());
-                                    
-                                    contas.get(numConta).realizarSaque(valor); // Chama o método de saque
-                                    break;
-                                case 2: // Sair
-                                    sairOperacoes = true;
-                                    break;
-                            }
-                        }
-                }
+            switch (opcao) {
+                case 1:
+                    menuConta(scanner);
+                    break;
+                case 2:
+                    menuCliente(scanner);
+                    break;
+                case 3:
+                    menuOperacoes(scanner);
+                    break;
+                case 4:
+                    sair = true;
+                    break;
             }
         }
-		if(opcao == 1){
-			Scanner scanner = new Scanner(System.in);
-            ArrayList<Cliente> contas = new ArrayList<>();
-            boolean sair = false;
-			while (!sair) {
-				Menu contaMenu = new Menu("Menu da Conta", Arrays.asList(
+
+        System.out.println("Fim do programa.");
+    }
+
+    private static void menuConta(Scanner scanner) {
+        Menu contaMenu = new Menu("Menu da Conta", Arrays.asList(
                 "Abrir Conta",
-                "Voltar"));
-				 int selecao = contaMenu.getSelection();
-				 if (selecao == 1) {
-					System.out.print("Digite o CPF do cliente: ");
-					String cpf = scanner.nextLine();
-					banco.abrirConta(cpf);
-				}
-				if(selecao == 2){
-					sair = true;
-				}
-			}
+                "Voltar"
+        ));
+        int opcao = contaMenu.getSelection();
+        if (opcao == 1) {
+            System.out.print("Digite o CPF do cliente: ");
+            String cpf = scanner.nextLine();
+            banco.abrirConta(cpf);
+        }
+    }
 
-		}
-		
-		if(opcao == 4){
-			var = true;
+    private static void menuCliente(Scanner scanner) {
+        Menu clienteMenu = new Menu("Menu do Cliente", Arrays.asList(
+                "Cadastrar Cliente",
+                "Voltar"
+        ));
+        int opcao = clienteMenu.getSelection();
+        if (opcao == 1) {
+            System.out.print("Nome: ");
+            String nome = scanner.nextLine();
+            System.out.print("CPF: ");
+            String cpf = scanner.nextLine();
+            banco.cadastrarCliente(nome, cpf);
+        }
+    }
 
-		}
-	}
+    private static void menuOperacoes(Scanner scanner) {
+        if (banco.getContas().isEmpty()) {
+            System.out.println("Nenhuma conta cadastrada.");
+            return;
+        }
 
-        System.out.println("Fim");
+        System.out.println("Contas disponíveis:");
+        for (Conta c : banco.getContas()) {
+            System.out.println("Conta " + c.getNumero() + " - Titular: " + c.getTitular().getNome());
+        }
+
+        System.out.print("Informe o número da conta: ");
+        int numeroConta = Integer.parseInt(scanner.nextLine());
+        Conta conta = banco.encontrarContaPorNumero(numeroConta);
+        if (conta == null) {
+            System.out.println("Conta não encontrada.");
+            return;
+        }
+
+        boolean sair = false;
+        while (!sair) {
+            Menu operacoesMenu = new Menu("Menu de Operações", Arrays.asList(
+                    "Realizar Saque",
+                    "Gerar Relatório de Transações",
+                    "Voltar"
+            ));
+            int selecao = operacoesMenu.getSelection();
+            switch (selecao) {
+                case 1:
+                    System.out.print("Informe o valor do saque: ");
+                    double valor = Double.parseDouble(scanner.nextLine());
+                    if (conta.sacar(valor)) {
+                        System.out.println("Saque realizado com sucesso.");
+                    } else {
+                        System.out.println("Saque inválido ou saldo insuficiente.");
+                    }
+                    break;
+                case 2:
+                    conta.gerarRelatorio();
+                    break;
+                case 3:
+                    sair = true;
+                    break;
+            }
+        }
     }
 }
